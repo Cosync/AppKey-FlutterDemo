@@ -270,22 +270,35 @@ class AuthService {
 
 
 
+ // Initialize passkey login
+  static Future<CredentialLoginOptions> verify(String handle) async {
 
-  static Future<Map<String, dynamic>> verify(Map <String, dynamic> data) async {
+    final response = await _apiRequest("POST", "api/appuser/verify", {'handle': handle}, null, null);  
+    final decode = jsonDecode(response.body); 
+     
+    decode['challenge'] = base64UrlToBase64(decode['challenge']); 
+    final result =  CredentialLoginOptions.fromJson(decode); 
+    return result;
+  } 
+
+  static Future<UserModel> verifyComplete(String handle,  PublicKeyCredential request) async {
+
+    Map<String, dynamic> body = {
+      'handle': handle, 
+    }; 
+    body.addAll(request.toJson());  
+    final response = await _apiRequest("POST", "api/appuser/verifyComplete", body, null, null);  
+    final decode = jsonDecode(response.body); 
+    return UserModel.fromJson(decode);
+
+  } 
+
+  static Future<UserModel> updatePasskey(String id, String keyName, String accessToken) async {
     
-    final response = await _apiRequest("POST", "api/appuser/verify", data, null, null);   
-    
-    final decode = jsonDecode(response.body);
-    return decode;
-  }
+    final response = await _apiRequest("POST", "api/appuser/updatePasskey", {"keyId": id, "keyName":keyName}, accessToken, null);   
 
-
-  static Future<Map<String, dynamic>> verifyComplete(Map <String, dynamic> data) async {
-    
-    final response = await _apiRequest("POST", "api/appuser/verifyComplete", data, null, null);   
-
-    final decode = jsonDecode(response.body);
-    return decode;
+    final json = jsonDecode(response.body);
+    return UserModel.fromJson(json);
   }
  
 

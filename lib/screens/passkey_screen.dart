@@ -28,20 +28,20 @@ class _PasskeyScreen extends ConsumerState<PasskeyScreen> {
 
   final List<int> colorCodes = <int>[600, 500, 600, 500, 100, 600, 500, 100, 100];
  
-  void _updateKey(item){
+  void _updateKey(item, user){
      
     showModalBottomSheet(
       context: context,
-      builder: (ctx) => EditPasskey(passkey:item),
+      builder: (ctx) => EditPasskey(passkey:item, user:user),
     );
   }
 
-  void _deleteKey(item){
+  void _deleteKey(item, user){
 
   }
 
 
-  Widget renderKey (item){
+  Widget renderKey (item, user){
     return SizedBox(
       width: double.infinity,
       child: Container(
@@ -50,12 +50,12 @@ class _PasskeyScreen extends ConsumerState<PasskeyScreen> {
           children: [ 
             Text('- ${item.name}', style: TextStyle(fontWeight: FontWeight.bold)),
             IconButton(
-              onPressed: () =>_updateKey(item),
+              onPressed: () =>_updateKey(item, user),
               icon: const Icon(Icons.edit),
             ),
             const SizedBox(height: 30),
             IconButton(
-              onPressed: () => _deleteKey(item),
+              onPressed: () => _deleteKey(item, user),
               icon: const Icon(Icons.delete_outline),
             ),
             const SizedBox(height: 30),
@@ -101,7 +101,7 @@ class _PasskeyScreen extends ConsumerState<PasskeyScreen> {
               ]
             ),  
             Column( 
-              children: authenticators.map((item) => renderKey(item)  ).toList(),
+              children: authenticators.map((item) => renderKey(item, user)  ).toList(),
             
             ),  
 

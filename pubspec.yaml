@@ -38,6 +38,7 @@ dependencies:
   global_configuration: ^2.0.0
   credential_manager: ^2.0.2
   flutter_riverpod: ^2.6.1
+  localstore: ^1.4.0
  
 
 dev_dependencies:

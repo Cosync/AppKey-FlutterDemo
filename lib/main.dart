@@ -7,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:appkey_flutter_demo/auth_service.dart';
 import 'package:appkey_flutter_demo/screens/authentication_screen.dart';
 import 'package:flutter/material.dart';
- 
+import 'package:localstore/localstore.dart';
 
 
 Future<void> main() async {
@@ -29,6 +29,8 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
+    final db = Localstore.instance;
+    
     UserModel user = ref.watch(userProvider); 
     
     return MaterialApp(
