@@ -16,4 +16,11 @@ class AppkeyError {
     );
   }
 
+  factory AppkeyError.defaultError() {
+    return AppkeyError(
+      code: 404,
+      message: "Something went wrong.",
+    );
+  }
+
 }

@@ -2,12 +2,14 @@
 
 import 'dart:convert';
 import 'dart:developer';
+import 'package:appkey_flutter_demo/error_handler.dart';
 import 'package:appkey_flutter_demo/models/app.dart';
 import 'package:appkey_flutter_demo/models/app_user.dart';
 import 'package:appkey_flutter_demo/models/appkey_error.dart';
 import 'package:credential_manager/credential_manager.dart';
 import 'package:http/http.dart' as http;
  
+
 // https://dev.to/djsmk123/unlocking-the-future-passwordless-authenticationpasskey-with-flutter-and-nodejs-1ojh
 class AuthService {
   // Base URL for the API 
@@ -46,19 +48,6 @@ class AuthService {
 
   static  _apiRequest(String method, String endpoint, data, String? accessToken, String? signupToken  ) async{ 
     
-
-    if(method == "GET"){
-      final response = await http.get(
-        Uri.parse("$_apiUrl/$endpoint"),
-        headers: {
-          'Content-Type': 'application/json',
-          'app-token': _appToken
-        },
-      ); 
-      return response;
-    }
-
-    final params = data ?? {};
     var headers = {
       'Content-Type': 'application/json' 
     };
@@ -67,17 +56,31 @@ class AuthService {
     else if (signupToken != "" && signupToken != null){ headers['signup-token'] = signupToken; }
     else { headers['app-token'] = _appToken; }
 
-    final response = await http.post(
-      Uri.parse("$_apiUrl/$endpoint"),
-      body: jsonEncode(params),
-      headers: headers,
-    );
+     
 
-   
-    return response;
-    
-    
+      if(method == "GET"){
+        final response = await http.get(
+          Uri.parse("$_apiUrl/$endpoint"),
+          headers: headers,
+        ); 
 
+        ErrorHandler.getFailureFromResponse(response);
+
+        return response;
+      }
+
+      final params = data ?? {};
+      final response = await http.post(
+        Uri.parse("$_apiUrl/$endpoint"),
+        body: jsonEncode(params),
+        headers: headers,
+      );
+
+      ErrorHandler.getFailureFromResponse(response);
+
+      return response;
+
+    
     
   }
 
@@ -85,11 +88,7 @@ class AuthService {
   static Future<AppModel> getApp() async{
     
       final response = await _apiRequest("GET", "api/appuser/app", null, null, null);
-      final decode = jsonDecode(response.body);  
-
-      if (response.statusCode != 200) {  
-        Exception(AppkeyError.fromJson(decode));
-      } 
+      final decode = jsonDecode(response.body);   
       return AppModel.fromJson(decode); 
    
   }
@@ -98,12 +97,8 @@ class AuthService {
   static Future<CredentialCreationOptions> signup( String handle,  String displayName) async{
 
     final response = await _apiRequest("POST", "api/appuser/signup", {'handle': handle, 'displayName':displayName}, null, null);
-    final decode = jsonDecode(response.body);   
-  
-    if (response.statusCode != 200) {
-      Exception(AppkeyError.fromJson(decode)); 
-    }  
-
+    final decode = jsonDecode(response.body);  
+    
     decode['challenge'] = base64UrlToBase64(decode['challenge']);  
     return CredentialCreationOptions.fromJson( decode); 
 
@@ -123,9 +118,7 @@ class AuthService {
   
     final response = await _apiRequest("POST", "api/appuser/signupConfirm", body, null, null); 
     final decode = jsonDecode(response.body); 
-    if (response.statusCode != 200) {
-      Exception(AppkeyError.fromJson(decode));
-    }  
+    
     return decode;
 
     
@@ -139,9 +132,7 @@ class AuthService {
 
       final decode = jsonDecode(response.body);
 
-      if (response.statusCode != 200) {
-        Exception(decode['message']);
-      } 
+      
       return UserModel.fromJson(decode);
 
     } catch (e) {
@@ -153,11 +144,8 @@ class AuthService {
   static Future<CredentialLoginOptions> login(String handle) async {
 
     final response = await _apiRequest("POST", "api/appuser/login", {'handle': handle}, null, null);  
-    final decode = jsonDecode(response.body);
-
-    if (response.statusCode != 200) {
-      throw Exception(AppkeyError.fromJson(decode));
-    }  
+    final decode = jsonDecode(response.body); 
+     
     decode['challenge'] = base64UrlToBase64(decode['challenge']); 
     final result =  CredentialLoginOptions.fromJson(decode); 
     return result;
@@ -175,11 +163,7 @@ class AuthService {
     final response = await _apiRequest("POST", "api/appuser/loginComplete", body, null, null); 
 
     final decode = jsonDecode(response.body);
-    if (response.statusCode != 200) {
-      throw Exception(
-          'Failed to load credential login complete options ${decode['message']} ');
-    }
-
+    
     log("Response from passkey login complete init: ${decode.toString()}");
     return UserModel.fromJson(decode);
 
@@ -190,12 +174,7 @@ class AuthService {
   static Future<CredentialCreationOptions> loginAnonymous( String handle) async{
 
     final response = await _apiRequest("POST", "api/appuser/loginAnonymous", {'handle': handle}, null, null); 
-    final decode = jsonDecode(response.body); 
-
-    if (response.statusCode != 200) {
-      throw Exception(AppkeyError.fromJson(decode)); 
-    } 
-
+    final decode = jsonDecode(response.body);  
     decode['challenge'] = base64UrlToBase64(decode['challenge']);  
     return CredentialCreationOptions.fromJson(decode);
   }
@@ -212,11 +191,7 @@ class AuthService {
     try {
       final response = await _apiRequest("POST", "api/appuser/loginAnonymousComplete", body, null, null); 
       final decode = jsonDecode(response.body);
-
-      if (response.statusCode != 200) {
-        throw Exception(AppkeyError.fromJson(decode)); 
-      } 
-
+ 
       return decode;
 
     } catch (e) {
@@ -229,12 +204,7 @@ class AuthService {
   static Future<bool> setUserName(String userName, String accessToken) async {
     
     final response = await _apiRequest("POST", "api/appuser/setUserName", {"userName":userName}, accessToken, null); 
-    
-
-    final decode = jsonDecode(response.body);
-    if (response.statusCode != 200) {
-      throw Exception(AppkeyError.fromJson(decode)); 
-    }
+    final decode = jsonDecode(response.body); 
     return decode;
   }
 
@@ -245,9 +215,6 @@ class AuthService {
     final response = await _apiRequest("POST", "api/appuser/updateProfile", {"displayName":displayName}, accessToken, null); 
      
     final decode = jsonDecode(response.body);
-    if (response.statusCode != 200) {
-      throw Exception(AppkeyError.fromJson(decode));
-    } 
     
     return decode;
   }
@@ -257,12 +224,7 @@ class AuthService {
   static Future<UserModel> setLocale(String locale, String accessToken) async {
 
     final response = await _apiRequest("POST", "api/appuser/setLocale", {"locale":locale}, accessToken, null); 
-    
     final decode = jsonDecode(response.body);
-    if (response.statusCode != 200) {
-      throw Exception(AppkeyError.fromJson(decode));
-    } 
-   
     return UserModel.fromJson(decode);
   }
 
@@ -271,15 +233,8 @@ class AuthService {
   static Future<Map<String, dynamic>> userNameAvailable(String userName, String accessToken) async {
     
     final response = await _apiRequest("GET", "api/appuser/userNameAvailable?userName=$userName", null, accessToken, null); 
-    print(accessToken);
-
-    final decode = jsonDecode(response.body);
-    if (response.statusCode != 200) {
-      throw Exception(AppkeyError.fromJson(decode));
-    }
-
-    
-    return decode;
+    return jsonDecode(response.body);
+ 
   }
 
 
@@ -287,13 +242,7 @@ class AuthService {
   static Future<Map<String, dynamic>> socialLogin(Map <String, dynamic> data) async {
     
     final response = await _apiRequest("POST", "api/appuser/socialLogin", data, null, null);  
-  
-
     final decode = jsonDecode(response.body);
-    if (response.statusCode != 200) {
-      throw Exception(AppkeyError.fromJson(decode));
-    } 
-
     return decode;
   }
 
@@ -301,15 +250,8 @@ class AuthService {
   static Future<Map<String, dynamic>> socialSignup(Map <String, dynamic> data) async {
     
 
-    final response = await _apiRequest("POST", "api/appuser/socialSignup", data, null, null);  
-  
-
+    final response = await _apiRequest("POST", "api/appuser/socialSignup", data, null, null); 
     final decode = jsonDecode(response.body);
-    if (response.statusCode != 200) {
-      throw Exception(AppkeyError.fromJson(decode));
-    }
-
-    
     return decode;
   }
 
@@ -334,11 +276,6 @@ class AuthService {
     final response = await _apiRequest("POST", "api/appuser/verify", data, null, null);   
     
     final decode = jsonDecode(response.body);
-    if (response.statusCode != 200) {
-      throw Exception(AppkeyError.fromJson(decode));
-    }
-
-    
     return decode;
   }
 
@@ -348,10 +285,6 @@ class AuthService {
     final response = await _apiRequest("POST", "api/appuser/verifyComplete", data, null, null);   
 
     final decode = jsonDecode(response.body);
-    if (response.statusCode != 200) {
-      throw Exception(AppkeyError.fromJson(decode));
-    } 
-    
     return decode;
   }
  

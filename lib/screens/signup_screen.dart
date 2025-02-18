@@ -118,7 +118,6 @@ class _SignupScreen extends ConsumerState<SignupScreen> {
        }
     
     } on AppkeyError catch (error) {  
-
       setState(() {
         _errorMessage = error.message;
       });

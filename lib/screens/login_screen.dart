@@ -50,9 +50,7 @@ class _LoginScreen extends ConsumerState<LoginScreen>  {
             userVerification: result.userVerification,
         ),
       );
-
-
-      
+ 
 
       if(credResponse.publicKeyCredential != null) {
 
@@ -62,19 +60,17 @@ class _LoginScreen extends ConsumerState<LoginScreen>  {
           ref.read(userProvider.notifier).addUser(user);
        }
     
-      }
-
+      } 
      
-     } on AppkeyError catch (error) {  
-
-      setState(() {
-        _errorMessage = error.message;
-      });
      
-    } catch (e) {
-      // No specified type, handles all
+    } on AppkeyError catch (e) {
+      
+      _errorMessage = e.message ;
+    }
+    catch (e){
       _errorMessage = 'Something really unknown: $e';
     }
+
     finally{
       setState(() {
         _isSending = false;

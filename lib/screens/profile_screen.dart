@@ -171,6 +171,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                         }
                         else{
                           setState(() {
+                             _errorMessage = "";
                             _enteredUsername = text;
                           });
                         }
