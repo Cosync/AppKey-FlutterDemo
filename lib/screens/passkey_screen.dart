@@ -41,25 +41,27 @@ class _PasskeyScreen extends ConsumerState<PasskeyScreen> {
   }
 
 
-  Widget renderKey (item, user){
+  Widget renderKey (item, UserModel user){
     return SizedBox(
       width: double.infinity,
       child: Container(
-        margin: const EdgeInsets.all(40),
+        margin: const EdgeInsets.all(10),
         child: Row( 
           children: [ 
             Text('- ${item.name}', style: TextStyle(fontWeight: FontWeight.bold)),
+            const Spacer(),
             IconButton(
               onPressed: () =>_updateKey(item, user),
               icon: const Icon(Icons.edit),
             ),
-            const SizedBox(height: 30),
-            IconButton(
-              onPressed: () => _deleteKey(item, user),
-              icon: const Icon(Icons.delete_outline),
-            ),
-            const SizedBox(height: 30),
-            
+            const SizedBox(width: 10),
+            if (user.authenticators.length > 1) ...[
+              IconButton(
+                onPressed: () => _deleteKey(item, user),
+                icon: const Icon(Icons.delete_outline),
+              ),
+              const SizedBox(height: 20),
+            ],
           ]
         )
       )
@@ -89,14 +91,14 @@ class _PasskeyScreen extends ConsumerState<PasskeyScreen> {
         child: Column(
           children: [
             Column(
-              children: [ 
+              children: [
                 const SizedBox(height: 12),
                 if(_message != "") Text(_message, style: TextStyle(color: Colors.blueAccent, fontSize: 16),),
                 if(_errorMessage != "") Text(_errorMessage, style: TextStyle(color: Colors.redAccent, fontSize: 16)),
  
-                Text(" Display Name: ${user.displayName}", style: TextStyle(color: Colors.blueAccent, fontSize: 16)), 
-               
-                Text("Your Passkeys: ${user.authenticators.length}", style: TextStyle(fontWeight: FontWeight.bold),),
+                Text("Account Handle: ${user.handle}", style: TextStyle(color: Colors.blueAccent, fontSize: 16)), 
+                const SizedBox(height: 12),
+                Text("Your Passkeys: ${authenticators.length}", style: TextStyle(fontWeight: FontWeight.bold),),
                  
               ]
             ),  

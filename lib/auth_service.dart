@@ -95,33 +95,23 @@ class AuthService {
 
 
   static Future<CredentialCreationOptions> signup( String handle,  String displayName) async{
-
     final response = await _apiRequest("POST", "api/appuser/signup", {'handle': handle, 'displayName':displayName}, null, null);
     final decode = jsonDecode(response.body);  
     
     decode['challenge'] = base64UrlToBase64(decode['challenge']);  
-    return CredentialCreationOptions.fromJson( decode); 
-
-   
-    
+    return CredentialCreationOptions.fromJson( decode);  
   }
 
 
   static Future < Map<String,dynamic> > signupConfirm( String handle , PublicKeyCredential request ) async{ 
-
     Map<String, dynamic> body = {
       'handle': handle, 
     };
 
     body.addAll(request.toJson()); 
-
-  
     final response = await _apiRequest("POST", "api/appuser/signupConfirm", body, null, null); 
     final decode = jsonDecode(response.body); 
-    
     return decode;
-
-    
   }
 
   static Future < UserModel > signupComplete( String code , String signupToken ) async{  
@@ -141,14 +131,14 @@ class AuthService {
   }
 
   // Initialize passkey login
-  static Future<CredentialLoginOptions> login(String handle) async {
+  static Future<Map <String,dynamic>> login(String handle) async {
 
     final response = await _apiRequest("POST", "api/appuser/login", {'handle': handle}, null, null);  
     final decode = jsonDecode(response.body); 
      
     decode['challenge'] = base64UrlToBase64(decode['challenge']); 
-    final result =  CredentialLoginOptions.fromJson(decode); 
-    return result;
+   
+    return decode;
   }
 
 
@@ -299,6 +289,27 @@ class AuthService {
 
     final json = jsonDecode(response.body);
     return UserModel.fromJson(json);
+  }
+
+
+  static Future<CredentialCreationOptions> addPasskey(String token) async{
+    final response = await _apiRequest("POST", "api/appuser/addPasskey", {}, token, null);
+    final decode = jsonDecode(response.body);  
+    
+    decode['challenge'] = base64UrlToBase64(decode['challenge']);  
+    return CredentialCreationOptions.fromJson( decode);  
+  }
+
+
+  static Future < UserModel > addPasskeyComplete( String handle , PublicKeyCredential request, String token ) async{ 
+    Map<String, dynamic> body = {
+      'handle': handle, 
+    };
+
+    body.addAll(request.toJson()); 
+    final response = await _apiRequest("POST", "api/appuser/addPasskeyComplete", body, token, null); 
+    final decode = jsonDecode(response.body); 
+    return UserModel.fromJson(decode);
   }
  
 
