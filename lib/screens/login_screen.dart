@@ -1,6 +1,7 @@
 import 'package:appkey_flutter_demo/auth_service.dart';
 import 'package:appkey_flutter_demo/models/appkey_error.dart';
 import 'package:appkey_flutter_demo/providers/app_provider.dart';
+import 'package:appkey_flutter_demo/widgets/header.dart';
 import 'package:credential_manager/credential_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -108,37 +109,15 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Login",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+      
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
-          children: [
-            Row(
-              children: [
-                Image.asset(
-                  "images/appkey_logo.png",
-                  height: 100,
-                  width: 100,
-                ),
-                Spacer(),
-                Image.asset(
-                  "images/cosync_bricks.png",
-                  height: 100,
-                  width: 100,
-                ),
-              ],
-            ),
-            const Spacer(),
-            Text(
-                "Welcome to the AppKey demo! Log in securely using your passkey or sign up with your email to create one in seconds. See for yourself how fast and seamless passkey creation can be with AppKey—no passwords, no hassle, just security made simple."),
+          children: [ 
+            Header(message: "Welcome to the AppKey demo! Log in securely using your passkey or sign up with your email to create one in seconds. See for yourself how fast and seamless passkey creation can be with AppKey—no passwords, no hassle, just security made simple."),
+            const SizedBox(height: 12),
+            Text("Login", style: TextStyle(color: Colors.blueAccent, fontSize: 24, fontWeight: FontWeight.bold,)),
+            const SizedBox(height: 20),
             Form(
                 key: _formKey,
                 child: Column(children: [

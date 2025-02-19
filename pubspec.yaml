@@ -39,6 +39,7 @@ dependencies:
   credential_manager: ^2.0.2
   flutter_riverpod: ^2.6.1
   localstore: ^1.4.0
+  url_launcher: ^6.3.1
  
 
 dev_dependencies:

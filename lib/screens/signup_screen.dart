@@ -3,6 +3,7 @@
 import 'package:appkey_flutter_demo/auth_service.dart';
 import 'package:appkey_flutter_demo/models/appkey_error.dart';
 import 'package:appkey_flutter_demo/providers/app_provider.dart';
+import 'package:appkey_flutter_demo/widgets/header.dart';
 import 'package:flutter/material.dart'; 
 import 'package:flutter_riverpod/flutter_riverpod.dart'; 
 
@@ -143,44 +144,20 @@ class _SignupScreen extends ConsumerState<SignupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Sing Up",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
+    return Scaffold( 
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-            Row(
-              children: [
-                Image.asset(
-                  "images/appkey_logo.png",
-                  height: 100,
-                  width: 100,
-                ),
-                Spacer(),
-                Image.asset(
-                  "images/cosync_bricks.png",
-                  height: 100,
-                  width: 100,
-                ),
-              ],
-            ),
-            const Spacer(),
-            Text("Welcome to the AppKey demo! Sign up with your email to create your passkey and log in effortlessly. Discover how simple and secure passwordless login can be—no passwords, just your passkey."),
+           
+            Header(message:"Welcome to the AppKey demo! Sign up with your email to create your passkey and log in effortlessly. Discover how simple and secure passwordless login can be—no passwords, just your passkey."),
+            const SizedBox(height: 12),
+            Text("Sign Up", style: TextStyle(color: Colors.blueAccent, fontSize: 24, fontWeight: FontWeight.bold)),
+
             Column(
-              children: [
-
+              children: [ 
                 if(_message != "") Text(_message, style: TextStyle(color: Colors.blueAccent, fontSize: 16),),
-                if(_errorMessage != "") Text(_errorMessage, style: TextStyle(color: Colors.redAccent, fontSize: 16)),
-
-               
+                if(_errorMessage != "") Text(_errorMessage, style: TextStyle(color: Colors.redAccent, fontSize: 16)), 
                 if (_isConfirmCode) ...[
                   Form(
                     key: _formKeyComfirmed,

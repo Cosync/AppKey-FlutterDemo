@@ -1,6 +1,7 @@
 
  
 import 'package:appkey_flutter_demo/models/appkey_error.dart';
+import 'package:appkey_flutter_demo/widgets/header.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; 
 import 'package:appkey_flutter_demo/auth_service.dart';
 import 'package:appkey_flutter_demo/models/app.dart';
@@ -109,12 +110,13 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: [
-            Text("Success! You’ve Logged into the AppKey Demo. Congratulations on using your passkey—how simple was that? No passwords, no MFA, no cheat sheets—just effortless, secure login. Sign up for AppKey today to bring this seamless passwordless authentication to your mobile or web app!"),
-            const SizedBox(height: 12),
+
+            Header(message: "Success! You’ve Logged into the AppKey Demo. Congratulations on using your passkey—how simple was that? No passwords, no MFA, no cheat sheets—just effortless, secure login. Sign up for AppKey today to bring this seamless passwordless authentication to your mobile or web app!"),
+            const SizedBox(height: 12), 
 
             Text( "Welcome: ${user.displayName} "),
-            Text(  "Hanlde: ${user.handle} " ),
-            if(user.userName != null) Text(  "Hanlde: ${user.userName} " ),
+            Text( "Hanlde: ${user.handle} " ),
+            if(user.userName != null) Text(  "User Name: ${user.userName} " ),
 
             const SizedBox(height: 12),
             if(_message != "") Text(_message, style: TextStyle(color: Colors.blueAccent, fontSize: 16),),
