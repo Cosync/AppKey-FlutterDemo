@@ -48,7 +48,13 @@ class _PasskeyScreen extends ConsumerState<PasskeyScreen> {
         margin: const EdgeInsets.all(10),
         child: Row( 
           children: [ 
-            Text('- ${item.name}', style: TextStyle(fontWeight: FontWeight.bold)),
+            if(item.name.length > 30) ...[
+              Text('- ${item.name.substring(0,30)}...', style: TextStyle(fontWeight: FontWeight.bold)),
+            ]
+            else ...[
+               Text('- ${item.name}', style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+           
             const Spacer(),
             IconButton(
               onPressed: () =>_updateKey(item, user),

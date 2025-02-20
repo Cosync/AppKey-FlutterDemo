@@ -169,8 +169,9 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
             Header(message: "Welcome to the AppKey demo! Log in securely using your passkey or sign up with your email to create one in seconds. See for yourself how fast and seamless passkey creation can be with AppKey—no passwords, no hassle, just security made simple."),
            
             const SizedBox(height: 12),
-            Text("Login", style: TextStyle(color: Colors.blueAccent, fontSize: 24, fontWeight: FontWeight.bold,)),
-            
+            Center(child:  
+              Text("Login", style: TextStyle(color: Colors.blueAccent, fontSize: 24, fontWeight: FontWeight.bold,)),
+            ),
             
             Form(
                 key: _formKey,
