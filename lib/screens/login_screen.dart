@@ -53,7 +53,7 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
     } on AppkeyError catch (e) {
       _errorMessage = e.message;
     } catch (e) {
-      _errorMessage = 'Something really unknown: $e';
+      _errorMessage = 'Internal Server Error: $e';
     }
   }
 
@@ -93,7 +93,7 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
     } on AppkeyError catch (e) {
       _errorMessage = e.message;
     } catch (e) {
-      _errorMessage = 'Something really unknown.';
+      _errorMessage = 'Internal Server Error.';
     } finally {
       setState(() {
         _isSendingAnon = false;
@@ -111,7 +111,7 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
 
     try {
       final result = await AuthService.login(_enteredHandle);
-      if(result['requireAddPasskey']){
+      if(result['requireAddPasskey'] == true){
         setState(() {
           _requireAddPasskey = true;
         });
@@ -140,7 +140,7 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
     } on AppkeyError catch (e) {
       _errorMessage = e.message;
     } catch (e) {
-      _errorMessage = 'Something really unknown';
+      _errorMessage = 'Invalid Passkey Authorization';
     } finally {
       setState(() {
         _isSending = false;

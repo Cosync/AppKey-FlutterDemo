@@ -9,20 +9,20 @@ import 'package:credential_manager/credential_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class EditPasskey extends ConsumerStatefulWidget {
+class DeletePasskey extends ConsumerStatefulWidget {
 
-  const EditPasskey({super.key, required this.passkey, required this.user, this.child});
+  const DeletePasskey({super.key, required this.passkey, required this.user, this.child});
   final Authenticator passkey; 
   final UserModel user;  
   final Widget? child;    
 
   @override
-    ConsumerState<EditPasskey> createState() {
-      return _EditPasskey();
+    ConsumerState<DeletePasskey> createState() {
+      return _DeletePasskey();
     }
 }
 
-class _EditPasskey extends ConsumerState<EditPasskey> { 
+class _DeletePasskey extends ConsumerState<DeletePasskey> { 
   
   final _formKey = GlobalKey<FormState>();
   var _enteredName = '';
@@ -38,18 +38,8 @@ class _EditPasskey extends ConsumerState<EditPasskey> {
     ref.read(appProvider);
   }
 
-  void _updateKeyName(context) async{
-
-     if (!_formKey.currentState!.validate()){ 
-      setState(() { 
-        _errorMessage = "Please enter key name";
-      });
-
-      return; 
-    } 
-
-    _formKey.currentState!.save();
-
+  void _deleteKey(context) async{
+ 
      setState(() { 
         _isSending = true;
       });
@@ -127,25 +117,7 @@ class _EditPasskey extends ConsumerState<EditPasskey> {
         key: _formKey, 
         child: Column(
           children: [
-            TextFormField(
-              decoration: const InputDecoration(
-                label: Text('Key Name'),
-              ),
-              maxLength: 50, 
-              initialValue: widget.passkey.name,
-              validator: (value) {
-                if (value == null ||
-                        value.isEmpty ||
-                        value.trim().length <= 1 ||
-                        value.trim().length > 50) {
-                      return 'Must be between 1 and 50 characters.';
-                    }
-                return null;
-              },
-              onSaved: (value) {
-                _enteredName = (value!);
-              },
-            ),
+            Text("Are you sure you want to delete this passkey: '${widget.passkey.name}'"),
 
             const SizedBox(height: 20),
             Row(
@@ -158,14 +130,18 @@ class _EditPasskey extends ConsumerState<EditPasskey> {
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton(
-                  onPressed:  () => { _isSending ? null : _updateKeyName(context) },
+                  onPressed:  () => { _isSending ? null : _deleteKey(context) },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red, // background
+                     
+                  ),
                   child: _isSending
                       ? const SizedBox(
                           height: 16,
                           width: 16,
                           child: CircularProgressIndicator(),
                         )
-                      : const Text('Update'),
+                      : const Text('Delete'),
                 ),
 
                 

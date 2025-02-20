@@ -82,7 +82,7 @@ class _SignupScreen extends ConsumerState<SignupScreen> {
      
     } catch (e) {
       // No specified type, handles all
-      _errorMessage = 'Something really unknown: $e';
+      _errorMessage = 'Internal Server Error: $e';
     }
    
 
@@ -125,7 +125,7 @@ class _SignupScreen extends ConsumerState<SignupScreen> {
      
     } catch (e) {
       // No specified type, handles all
-      _errorMessage = 'Something really unknown: $e';
+      _errorMessage = 'Internal Server Error: $e';
     }
     finally{
        setState(() {

@@ -2,6 +2,7 @@
 
 import 'package:appkey_flutter_demo/models/app_user.dart';
 import 'package:appkey_flutter_demo/providers/app_provider.dart';
+import 'package:appkey_flutter_demo/widgets/delete_passkey.dart';
 import 'package:appkey_flutter_demo/widgets/edit_passkey.dart';
 import 'package:appkey_flutter_demo/widgets/passkeys_list.dart';
 import 'package:flutter/material.dart';
@@ -37,7 +38,10 @@ class _PasskeyScreen extends ConsumerState<PasskeyScreen> {
   }
 
   void _deleteKey(item, user){
-
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => DeletePasskey(passkey:item, user:user),
+    );
   }
 
 
@@ -61,13 +65,13 @@ class _PasskeyScreen extends ConsumerState<PasskeyScreen> {
               icon: const Icon(Icons.edit),
             ),
             const SizedBox(width: 10),
-            if (user.authenticators.length > 1) ...[
+            //if (user.authenticators.length > 1) ...[
               IconButton(
                 onPressed: () => _deleteKey(item, user),
                 icon: const Icon(Icons.delete_outline),
               ),
               const SizedBox(height: 20),
-            ],
+           //],
           ]
         )
       )
