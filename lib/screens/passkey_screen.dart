@@ -85,9 +85,7 @@ class _PasskeyScreen extends ConsumerState<PasskeyScreen> {
           ),
         ),
       ),
-      body: 
-      Center(
-
+      body:  Center( 
         child: Column(
           children: [
             Column(

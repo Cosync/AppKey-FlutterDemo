@@ -108,12 +108,14 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
-        child: Column(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(12.0),
           children: [
 
             Header(message: "Success! You’ve Logged into the AppKey Demo. Congratulations on using your passkey—how simple was that? No passwords, no MFA, no cheat sheets—just effortless, secure login. Sign up for AppKey today to bring this seamless passwordless authentication to your mobile or web app!"),
             const SizedBox(height: 12), 
-
+           
             Text( "Welcome: ${user.displayName} "),
             Text( "Hanlde: ${user.handle} " ),
             if(user.userName != null) Text(  "User Name: ${user.userName} " ),

@@ -83,7 +83,7 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
 
       final credResult = await AuthService.loginAnonymousComplete(handle,  credResponse); 
       final user = UserModel.fromJson(credResult);
-      
+
       if(user.accessToken != "" ) {
         ref.read(userProvider.notifier).addUser(user);
       }
@@ -140,7 +140,7 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
     } on AppkeyError catch (e) {
       _errorMessage = e.message;
     } catch (e) {
-      _errorMessage = 'Something really unknown: $e';
+      _errorMessage = 'Something really unknown';
     } finally {
       setState(() {
         _isSending = false;
@@ -160,11 +160,11 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
 
     final AppModel app = ref.watch(appProvider);   
 
-    return Scaffold(
-      
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
+    return Scaffold( 
+      body: Center( 
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.all(12.0),
           children: [ 
             Header(message: "Welcome to the AppKey demo! Log in securely using your passkey or sign up with your email to create one in seconds. See for yourself how fast and seamless passkey creation can be with AppKey—no passwords, no hassle, just security made simple."),
            
@@ -297,7 +297,8 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
             const Spacer(),
           ],
         ),
-      ),
+      )
+       
     );
   }
 }
