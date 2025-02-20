@@ -93,7 +93,7 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
     } on AppkeyError catch (e) {
       _errorMessage = e.message;
     } catch (e) {
-      _errorMessage = 'Something really unknown: $e';
+      _errorMessage = 'Something really unknown.';
     } finally {
       setState(() {
         _isSendingAnon = false;

@@ -5,7 +5,7 @@ import 'package:appkey_flutter_demo/models/appkey_error.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:async';
-import 'package:appkey_flutter_demo/config.dart' as config;
+import 'package:appkey_flutter_demo/config.dart';
  
 import 'package:flutter/foundation.dart';
 import 'dart:developer';
@@ -16,7 +16,7 @@ const List<String> scopes = <String>[
  
 GoogleSignIn _googleSignIn = GoogleSignIn(
    
-  clientId: "990108157672-utd6gf7eecnnd3o0uomqug6mtci0dfmo.apps.googleusercontent.com",
+  clientId: googleClientId,
   scopes: scopes,
 );
 
