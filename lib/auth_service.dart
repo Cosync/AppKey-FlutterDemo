@@ -2,6 +2,8 @@
 
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:ffi';
+
 import 'package:appkey_flutter_demo/error_handler.dart';
 import 'package:appkey_flutter_demo/models/app.dart';
 import 'package:appkey_flutter_demo/models/app_user.dart';
@@ -13,6 +15,7 @@ import 'package:http/http.dart' as http;
 // https://dev.to/djsmk123/unlocking-the-future-passwordless-authenticationpasskey-with-flutter-and-nodejs-1ojh
 class AuthService {
   // Base URL for the API 
+   
   static const String _apiUrl = String.fromEnvironment('API_URL', defaultValue: "https://api.appkey.io");
   static const String _appToken = String.fromEnvironment('APP_TOKEN',
       defaultValue: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJlN2Y2OWU3ZS01NWJiLTQzY2EtYTE4ZC02ODFkNGI0ZDI1MzciLCJhcHBJZCI6IjA2YTk3NmE4ZDExYjRkOTM5MjY4MTA0NzdmNWYyZDJlIiwic2NvcGUiOiJhcHAiLCJpYXQiOjE3MzMxNTA2OTd9.Dl2pEnxpcaLK8l_wor-XQBwb50TlC2MRCRyQVM3hAVn34wLxxdZOms-5xeVtIN7EIv_mP3BHN9vpTHu679HcsBZ5jWQNbfztzZX5h-FM0IanWHFPp6vihBoyWsRcWOwNHoPdgqNjeihkGfRWjXvpKQXRZv2qErpv4Lb2ferOu1rDkO4P_ghAmgflW2y9jm_UaXmd5Mt05WuVO3pFUyRjjdAgV23yTYYMSLeM3aZ4owOroZmAspNSFG7QWiotPK4itvb2qei1HASo9H5WYWjX3Ul09Sz5DROiPS-6wlWcIwLaYzCOa96O76O_qdFig0Qu9C-Xohn6ald1dCpSj97sPKlghOu-_k_5pvVRttQhpP0P1KbTPA-FMTQwRIhFmejAZQLrrKN2GAfCPgR3jn5zD8aAggCnSUVv2B_c1E-hdAuCuHJR2Q5btSjwnagZ4rVyzG8wy5bK9MkUslsnne8tcHkZQk8cOY3od5rVW2XZeH88h0R6kzm8snWqoqOCoFIV"
@@ -161,7 +164,7 @@ class AuthService {
 
 
   
-  static Future<CredentialCreationOptions> loginAnonymous( String handle) async{
+  static Future<CredentialCreationOptions> loginAnonymous(handle) async{ 
 
     final response = await _apiRequest("POST", "api/appuser/loginAnonymous", {'handle': handle}, null, null); 
     final decode = jsonDecode(response.body);  
