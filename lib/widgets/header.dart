@@ -15,7 +15,7 @@ class Header extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return Container(
       child: Column( 
       children: [
         Row(
@@ -42,10 +42,10 @@ class Header extends StatelessWidget{
             
           ],
         ),
-        const Spacer(),
+        const SizedBox(height: 12),
 
         Text(message),
-
+        const SizedBox(height: 15),
       ],
       )
     );

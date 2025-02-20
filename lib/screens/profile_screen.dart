@@ -147,7 +147,7 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                   },
                 ),
 
-                if(app.userNamesEnabled && user.userName == "" || user.userName == null)  ...[
+                if(user.loginProvider == "handle" && app.userNamesEnabled && (user.userName == "" || user.userName == null))  ...[
                   TextFormField(
                       maxLength: 50,
                       autocorrect: false,

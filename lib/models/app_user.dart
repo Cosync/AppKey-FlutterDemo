@@ -48,7 +48,7 @@ class UserModel {
       
         authenticators: json['authenticators'] != null
           ? (json['authenticators'] as List)
-              .map((item) => Authenticator.fromJson(item))
+              .map((item) =>  Authenticator.fromJson(item) )
               .toList()
           : [],
 

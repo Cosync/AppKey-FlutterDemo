@@ -22,9 +22,9 @@ class PasskeyScreen extends ConsumerStatefulWidget {
 class _PasskeyScreen extends ConsumerState<PasskeyScreen> { 
 
 
-  var _message = '';
-  var _errorMessage = '';
-  var _isSending = false;
+  final _message = '';
+  final _errorMessage = '';
+ 
 
   final List<int> colorCodes = <int>[600, 500, 600, 500, 100, 600, 500, 100, 100];
  
@@ -86,8 +86,8 @@ class _PasskeyScreen extends ConsumerState<PasskeyScreen> {
         ),
       ),
       body: 
-      Padding(
-        padding: const EdgeInsets.all(12.0),
+      Center(
+
         child: Column(
           children: [
             Column(
@@ -98,8 +98,13 @@ class _PasskeyScreen extends ConsumerState<PasskeyScreen> {
  
                 Text("Account Handle: ${user.handle}", style: TextStyle(color: Colors.blueAccent, fontSize: 16)), 
                 const SizedBox(height: 12),
-                Text("Your Passkeys: ${authenticators.length}", style: TextStyle(fontWeight: FontWeight.bold),),
-                 
+                if(user.loginProvider == "handle") ...[
+                  Text("Your Passkeys: ${authenticators.length}", style: TextStyle(fontWeight: FontWeight.bold),),
+                ]
+                else ...[
+
+                  Text("Your account is using Social Login Provider: ${user.loginProvider.toUpperCase()}.", style: TextStyle(fontWeight: FontWeight.bold),),
+                ]
               ]
             ),  
             Column( 
