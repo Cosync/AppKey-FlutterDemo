@@ -1,13 +1,11 @@
 
 import 'package:appkey_flutter_demo/auth_service.dart';
-import 'package:appkey_flutter_demo/models/app_user.dart';
 import 'package:appkey_flutter_demo/models/appkey_error.dart';
+import 'package:appkey_webauthn_flutter/appkey_webauthn_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:async';
-import 'package:appkey_flutter_demo/config.dart';
- 
-import 'package:flutter/foundation.dart';
+import 'package:appkey_flutter_demo/config.dart'; 
 import 'dart:developer';
 
 const List<String> scopes = <String>[
@@ -33,29 +31,25 @@ class SigninWithGoogle extends StatefulWidget{
 class _SigninWithGoogle extends State<SigninWithGoogle> {
 
  
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-  }
+  
 
   @override
   void initState() {
     super.initState();
   
 
-   _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) async {
+  //  _googleSignIn.onCurrentUserChanged.listen((GoogleSignInAccount? account) async {
  
-      bool isAuthorized = account != null;
-      // However, on web...
-      if (kIsWeb && account != null) {
-        isAuthorized = await _googleSignIn.canAccessScopes(scopes);
-      } 
+  //     bool isAuthorized = account != null;
+  //     // However, on web...
+  //     if (kIsWeb && account != null) {
+  //       isAuthorized = await _googleSignIn.canAccessScopes(scopes);
+  //     } 
 
-      if(account != null){
-        //handleGoogleAuth(account); 
-      }
-    });
+  //     if(account != null){
+  //       //handleGoogleAuth(account); 
+  //     }
+  //   });
 
     // In the web, _googleSignIn.signInSilently() triggers the One Tap UX.
     //
@@ -71,12 +65,12 @@ class _SigninWithGoogle extends State<SigninWithGoogle> {
     try {
       
    
-        final displayName = account.displayName ?? "";
+       // final displayName = account.displayName ?? "";
         final googleAuth = await account.authentication ;
         final idToken = googleAuth.idToken ?? ""; 
 
-        final result = await AuthService.socialLogin({"token":idToken, "provider": "google"});
-        final user = UserModel.fromJson(result);
+        final user = await AuthService.socialLogin({"token":idToken, "provider": "google"});
+    
         if (context.mounted) {
           widget.onGoogleLogin(user);
         }
@@ -94,7 +88,7 @@ class _SigninWithGoogle extends State<SigninWithGoogle> {
       }
 
     } catch (e) {
-      if (context != null && context.mounted) {
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(e.toString(), style: TextStyle(color: const Color.fromARGB(255, 194, 112, 112)),))
         );
@@ -109,8 +103,8 @@ class _SigninWithGoogle extends State<SigninWithGoogle> {
 
       final googleAuth = await account.authentication ;
       final token = googleAuth.idToken ?? "";  
-      final result = await AuthService.socialSignup({"token":token, "displayName":displayName, "handle":account.email, "provider":"google"});
-      final user = UserModel.fromJson(result);
+      final user = await AuthService.socialSignup({"token":token, "displayName":displayName, "handle":account.email, "provider":"google"});
+     
       // send user back to parent screen
       widget.onGoogleLogin(user);
 

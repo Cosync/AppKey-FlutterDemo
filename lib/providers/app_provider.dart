@@ -1,16 +1,14 @@
-
-
+ 
  
 
-import 'package:appkey_flutter_demo/models/app.dart';
-import 'package:appkey_flutter_demo/models/app_user.dart';
+import 'package:appkey_webauthn_flutter/appkey_webauthn_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AppNotifier extends StateNotifier <AppModel> {
 
   AppNotifier() : super(AppModel(appId: "", displayAppId: "", name: "", userId: "", status: "", handleType: "", appToken: "", signup: "", anonymousLoginEnabled: false, userNamesEnabled: false, appleLoginEnabled: false, googleLoginEnabled: false, relyPartyId: "", locales: []));
 
-  void addApp(AppModel app){ 
+  void addApp(AppModel app){  
     state = app;
   } 
  

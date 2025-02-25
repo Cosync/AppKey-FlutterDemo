@@ -1,12 +1,11 @@
 import 'package:appkey_flutter_demo/auth_service.dart';
-import 'package:appkey_flutter_demo/models/app.dart';
-import 'package:appkey_flutter_demo/models/app_user.dart';
 import 'package:appkey_flutter_demo/models/appkey_error.dart';
 import 'package:appkey_flutter_demo/providers/app_provider.dart';
 import 'package:appkey_flutter_demo/widgets/header.dart';
 import 'package:appkey_flutter_demo/widgets/signin_with_apple.dart';
 import 'package:appkey_flutter_demo/widgets/signin_with_google.dart';
-import 'package:credential_manager/credential_manager.dart';
+import 'package:appkey_webauthn_flutter/appkey_webauthn_flutter.dart'; 
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -37,9 +36,12 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
 
     setState(() {
       _isSending = true;
+      _errorMessage= "";
     });
 
     try { 
+
+       
       var result = await AuthService.addPasskey(_enteredTokenValue);  
 
       final credResponse = await AuthService.credentialManager.savePasskeyCredentials(request: result);
@@ -81,9 +83,8 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
 
       final credResponse = await AuthService.credentialManager.savePasskeyCredentials(request: result);
 
-      final credResult = await AuthService.loginAnonymousComplete(handle,  credResponse); 
-      final user = UserModel.fromJson(credResult);
-
+      final user = await AuthService.loginAnonymousComplete(handle,  credResponse); 
+      
       if(user.accessToken != "" ) {
         ref.read(userProvider.notifier).addUser(user);
       }
@@ -106,6 +107,7 @@ class _LoginScreen extends ConsumerState<LoginScreen> {
     _formKey.currentState!.save();
 
     setState(() {
+      _errorMessage = "";
       _isSending = true;
     });
 

@@ -1,327 +1,131 @@
-
-
-import 'dart:convert';
-import 'dart:developer';
-import 'dart:ffi';
-
-import 'package:appkey_flutter_demo/error_handler.dart';
-import 'package:appkey_flutter_demo/models/app.dart';
-import 'package:appkey_flutter_demo/models/app_user.dart';
-import 'package:appkey_flutter_demo/models/appkey_error.dart';
-import 'package:credential_manager/credential_manager.dart';
-import 'package:http/http.dart' as http;
+ 
+ 
+import 'package:appkey_webauthn_flutter/appkey_webauthn_flutter.dart'; 
 import 'package:appkey_flutter_demo/config.dart';
 
 // https://dev.to/djsmk123/unlocking-the-future-passwordless-authenticationpasskey-with-flutter-and-nodejs-1ojh
 class AuthService {
   // Base URL for the API 
-    
-    static const String _apiUrl = String.fromEnvironment('API_URL', defaultValue: apiUrl);
-    static const String _appToken = String.fromEnvironment('APP_TOKEN', defaultValue: appToken);
 
-
-    static String base64ToBase64Url(String base64) {
-      // Replace '+' with '-', '/' with '_'
-      String base64Url = base64.replaceAll('+', '-').replaceAll('/', '_');
-
-      // Remove padding characters ('=')
-      base64Url = base64Url.replaceAll('=', '');
-
-      return base64Url;
-    }
-
-    static String base64UrlToBase64(String base64Url) {
-      // Replace '-' with '+' and '_' with '/'
-      String base64 = base64Url.replaceAll('-', '+').replaceAll('_', '/');
-
-      // Add padding characters if necessary
-      switch (base64.length % 4) {
-        case 2:
-          base64 += '==';
-          break;
-        case 3:
-          base64 += '=';
-          break;
-      }
-
-      return base64;
-    }
-
-  static  _apiRequest(String method, String endpoint, data, String? accessToken, String? signupToken  ) async{ 
-    
-    var headers = {
-      'Content-Type': 'application/json' 
-    };
-
-    if(accessToken != "" && accessToken != null) { headers['access-token'] = accessToken; }
-    else if (signupToken != "" && signupToken != null){ headers['signup-token'] = signupToken; }
-    else { headers['app-token'] = _appToken; }
-
-     
-
-      if(method == "GET"){
-        final response = await http.get(
-          Uri.parse("$_apiUrl/$endpoint"),
-          headers: headers,
-        ); 
-
-        ErrorHandler.getFailureFromResponse(response);
-
-        return response;
-      }
-
-      final params = data ?? {};
-      final response = await http.post(
-        Uri.parse("$_apiUrl/$endpoint"),
-        body: jsonEncode(params),
-        headers: headers,
-      );
-
-      ErrorHandler.getFailureFromResponse(response);
-
-      return response;
-
-    
-    
-  }
-
-
-  static Future<AppModel> getApp() async{
-    
-      final response = await _apiRequest("GET", "api/appuser/app", null, null, null);
-      final decode = jsonDecode(response.body);   
-      return AppModel.fromJson(decode); 
+  static AppkeyWebAuthn appkeyInstance = AppkeyWebAuthn(appToken, apiUrl); 
    
+ 
+  static Future<AppModel> getApp() async {
+    final app = appkeyInstance.getApp();
+    return app;
   }
 
+  static Future<CredentialCreationOptions> signup(
+      String handle, String displayName) async {
+    final response = appkeyInstance.signup(handle, displayName);
+    return response;
+  }
 
-  static Future<CredentialCreationOptions> signup( String handle,  String displayName) async{
-    final response = await _apiRequest("POST", "api/appuser/signup", {'handle': handle, 'displayName':displayName}, null, null);
-    final decode = jsonDecode(response.body);  
+  static signupConfirm(
+      String handle, PublicKeyCredential request) async { 
+    final response = appkeyInstance.signupConfirm(handle, request);
+    return response;
+
     
-    decode['challenge'] = base64UrlToBase64(decode['challenge']);  
-    return CredentialCreationOptions.fromJson( decode);  
   }
 
+  static Future<UserModel> signupComplete(
+      String code, String signupToken) async {
 
-  static Future < Map<String,dynamic> > signupConfirm( String handle , PublicKeyCredential request ) async{ 
-    Map<String, dynamic> body = {
-      'handle': handle, 
-    };
-
-    body.addAll(request.toJson()); 
-    final response = await _apiRequest("POST", "api/appuser/signupConfirm", body, null, null); 
-    final decode = jsonDecode(response.body); 
-    return decode;
-  }
-
-  static Future < UserModel > signupComplete( String code , String signupToken ) async{  
-
-    try {
-      final response = await _apiRequest("POST", "api/appuser/signupComplete", {"code":code}, null, signupToken); 
-      
-
-      final decode = jsonDecode(response.body);
-
-      
-      return UserModel.fromJson(decode);
-
-    } catch (e) {
-        throw Exception(e);
-    }
+    return appkeyInstance.signupComplete(code, signupToken); 
   }
 
   // Initialize passkey login
-  static Future<Map <String,dynamic>> login(String handle) async {
-
-    final response = await _apiRequest("POST", "api/appuser/login", {'handle': handle}, null, null);  
-    final decode = jsonDecode(response.body); 
-     
-    decode['challenge'] = base64UrlToBase64(decode['challenge']); 
-   
-    return decode;
+  static Future<Map<String, dynamic>> login(String handle) async {
+    return appkeyInstance.login(handle);  
   }
-
 
   // Initialize passkey loginComplete
-  static Future<UserModel> loginComplete(String handle,  PublicKeyCredential request) async {
+  static Future<UserModel> loginComplete(
+      String handle, PublicKeyCredential request) async {
 
-    Map<String, dynamic> body = {
-    'handle': handle, 
-    }; 
-    body.addAll(request.toJson()); 
-
-    final response = await _apiRequest("POST", "api/appuser/loginComplete", body, null, null); 
-
-    final decode = jsonDecode(response.body);
-    
-    log("Response from passkey login complete init: ${decode.toString()}");
-    return UserModel.fromJson(decode);
-
-  }
-
-
-  
-  static Future<CredentialCreationOptions> loginAnonymous(handle) async{ 
-
-    final response = await _apiRequest("POST", "api/appuser/loginAnonymous", {'handle': handle}, null, null); 
-    final decode = jsonDecode(response.body);  
-    decode['challenge'] = base64UrlToBase64(decode['challenge']);  
-    return CredentialCreationOptions.fromJson(decode);
-  }
-
-
-  static Future < Map<String,dynamic> > loginAnonymousComplete( String handle , PublicKeyCredential request ) async{ 
-
-    Map<String, dynamic> body = {
-    'handle': handle, 
-    };
-
-    body.addAll(request.toJson()); 
-
-    try {
-      final response = await _apiRequest("POST", "api/appuser/loginAnonymousComplete", body, null, null); 
-      final decode = jsonDecode(response.body);
+    return appkeyInstance.loginComplete(handle, request);  
  
-      return decode;
-
-    } catch (e) {
-       throw Exception(e);
-    }
   }
 
-
-
-  static Future<bool> setUserName(String userName, String accessToken) async {
-    
-    final response = await _apiRequest("POST", "api/appuser/setUserName", {"userName":userName}, accessToken, null); 
-    final decode = jsonDecode(response.body); 
-    return decode;
+  static Future<CredentialCreationOptions> loginAnonymous(handle) async {
+    return appkeyInstance.loginAnonymous(handle);  
   }
 
-
-
-  static Future<bool> updateProfile(String displayName, String accessToken) async {
-    
-    final response = await _apiRequest("POST", "api/appuser/updateProfile", {"displayName":displayName}, accessToken, null); 
-     
-    final decode = jsonDecode(response.body);
-    
-    return decode;
+  static Future<UserModel> loginAnonymousComplete(
+      String handle, PublicKeyCredential request) async {
+      return appkeyInstance.loginAnonymousComplete(handle, request);  
   }
 
+  static Future<bool> setUserName(String userName, String accessToken) async { 
+    return appkeyInstance.setUserName(userName, accessToken);   
+  }
 
+  static Future<bool> updateProfile(
+      String displayName, String accessToken) async {
+      return appkeyInstance.updateProfile(displayName, accessToken);  
+  }
 
   static Future<UserModel> setLocale(String locale, String accessToken) async {
-
-    final response = await _apiRequest("POST", "api/appuser/setLocale", {"locale":locale}, accessToken, null); 
-    final decode = jsonDecode(response.body);
-    return UserModel.fromJson(decode);
+    return appkeyInstance.setLocale(locale, accessToken);   
   }
 
-
-
-  static Future<Map<String, dynamic>> userNameAvailable(String userName, String accessToken) async {
-    
-    final response = await _apiRequest("GET", "api/appuser/userNameAvailable?userName=$userName", null, accessToken, null); 
-    return jsonDecode(response.body);
- 
+  static Future<Map<String, dynamic>> userNameAvailable(
+      String userName, String accessToken) async {
+      return appkeyInstance.userNameAvailable(userName, accessToken);  
   }
 
-
-
-  static Future<Map<String, dynamic>> socialLogin(Map <String, dynamic> data) async {
-    
-    final response = await _apiRequest("POST", "api/appuser/socialLogin", data, null, null);  
-    final decode = jsonDecode(response.body);
-    return decode;
+  static Future<UserModel> socialLogin(
+      Map<String, dynamic> data) async {
+    return appkeyInstance.socialLogin(data);  
   }
 
-
-  static Future<Map<String, dynamic>> socialSignup(Map <String, dynamic> data) async {
-    
-
-    final response = await _apiRequest("POST", "api/appuser/socialSignup", data, null, null); 
-    final decode = jsonDecode(response.body);
-    return decode;
+  static Future<UserModel> socialSignup(
+      Map<String, dynamic> data) async {
+    return appkeyInstance.socialSignup(data);  
   }
 
+  static Future<UserModel> verifySocialAccount(
+      Map<String, dynamic> data) async {
 
-  static Future<Map<String, dynamic>> verifySocialAccount(Map <String, dynamic> data) async {
+    return appkeyInstance.verifySocialAccount(data);  
     
-    final response = await _apiRequest("POST", "api/appuser/verifySocialAccount", data, null, null);  
-    final decode = jsonDecode(response.body);
-    if (response.statusCode != 200) {
-      throw Exception(AppkeyError.fromJson(decode));
-    }
-
-    
-    return decode;
   }
 
-
-
- // Initialize passkey login
+  // Initialize passkey login
   static Future<CredentialLoginOptions> verify(String handle) async {
-
-    final response = await _apiRequest("POST", "api/appuser/verify", {'handle': handle}, null, null);  
-    final decode = jsonDecode(response.body); 
-     
-    decode['challenge'] = base64UrlToBase64(decode['challenge']); 
-    final result =  CredentialLoginOptions.fromJson(decode); 
-    return result;
-  } 
-
-  static Future<UserModel> verifyComplete(String handle,  PublicKeyCredential request) async {
-
-    Map<String, dynamic> body = {
-      'handle': handle, 
-    }; 
-    body.addAll(request.toJson());  
-    final response = await _apiRequest("POST", "api/appuser/verifyComplete", body, null, null);  
-    final decode = jsonDecode(response.body); 
-    return UserModel.fromJson(decode);
-
-  } 
-
-  static Future<UserModel> updatePasskey(String id, String keyName, String accessToken) async {
-    
-    final response = await _apiRequest("POST", "api/appuser/updatePasskey", {"keyId": id, "keyName":keyName}, accessToken, null);   
-
-    final json = jsonDecode(response.body);
-    return UserModel.fromJson(json);
+    return appkeyInstance.verify(handle);  
   }
 
+  static Future<UserModel> verifyComplete(
+      String handle, PublicKeyCredential request) async {
 
-  static Future<CredentialCreationOptions> addPasskey(String token) async{
-    final response = await _apiRequest("POST", "api/appuser/addPasskey", {}, token, null);
-    final decode = jsonDecode(response.body);  
+    return appkeyInstance.verifyComplete(handle, request);  
     
-    decode['challenge'] = base64UrlToBase64(decode['challenge']);  
-    return CredentialCreationOptions.fromJson( decode);  
   }
 
-
-  static Future < UserModel > addPasskeyComplete( String handle , PublicKeyCredential request, String token ) async{ 
-    Map<String, dynamic> body = {
-      'handle': handle, 
-    };
-
-    body.addAll(request.toJson()); 
-    final response = await _apiRequest("POST", "api/appuser/addPasskeyComplete", body, token, null); 
-    final decode = jsonDecode(response.body); 
-    return UserModel.fromJson(decode);
+  static Future<UserModel> updatePasskey(
+      String id, String keyName, String accessToken) async {
+    return appkeyInstance.updatePasskey(id, keyName, accessToken); 
   }
- 
 
-  static Future<CredentialCreationOptions> removePasskey(String keyId, token) async{
-    final response = await _apiRequest("POST", "api/appuser/removePasskey", {"keyId":keyId}, token, null);
-    final decode = jsonDecode(response.body);  
-    
-    decode['challenge'] = base64UrlToBase64(decode['challenge']);  
-    return CredentialCreationOptions.fromJson( decode);  
+  static Future<CredentialCreationOptions> addPasskey(String token) async { 
+    return appkeyInstance.addPasskey(token);  
+  }
+
+  static Future<UserModel> addPasskeyComplete(
+      String handle, PublicKeyCredential credential, String token) async {
+    return appkeyInstance.addPasskeyComplete(handle, credential, token);  
+  }
+
+  static Future<UserModel> removePasskey(
+      String keyId, token) async { 
+
+    return appkeyInstance.removePasskey(keyId, token);   
   }
 
   // Instance of CredentialManager
   static CredentialManager credentialManager = CredentialManager();
+  
+
 }

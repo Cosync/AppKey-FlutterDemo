@@ -1,8 +1,8 @@
 
 
-import 'package:appkey_flutter_demo/auth_service.dart';
-import 'package:appkey_flutter_demo/models/app_user.dart';
+import 'package:appkey_flutter_demo/auth_service.dart'; 
 import 'package:appkey_flutter_demo/models/appkey_error.dart';
+import 'package:appkey_webauthn_flutter/appkey_webauthn_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'dart:developer';
@@ -20,8 +20,8 @@ class SignInWithAppleWidget extends StatelessWidget {
 
       final displayName = "${credential.givenName} ${credential.familyName}";
       final token = credential.identityToken;
-      final result = await AuthService.socialSignup({"token":token, "displayName":displayName, "handle":credential.email, "provider":"apple"});
-      final user = UserModel.fromJson(result);
+      final user = await AuthService.socialSignup({"token":token, "displayName":displayName, "handle":credential.email, "provider":"apple"});
+    
       // send user back to parent screen
       onAppleLogin(user);
 
@@ -54,9 +54,8 @@ class SignInWithAppleWidget extends StatelessWidget {
       log('Family Name: ${credential.familyName}');
       
       try { 
-        final result = await AuthService.socialLogin({"token":credential.identityToken, "provider": "apple"});
-        final user = UserModel.fromJson(result);
-
+        final user = await AuthService.socialLogin({"token":credential.identityToken, "provider": "apple"});
+        
         // send user back to parent screen
         onAppleLogin(user);
 

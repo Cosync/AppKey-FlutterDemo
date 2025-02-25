@@ -1,11 +1,8 @@
-
-import 'dart:ffi';
-
-import 'package:appkey_flutter_demo/auth_service.dart';
-import 'package:appkey_flutter_demo/models/app_user.dart';
+ 
+import 'package:appkey_flutter_demo/auth_service.dart'; 
 import 'package:appkey_flutter_demo/models/appkey_error.dart';
 import 'package:appkey_flutter_demo/providers/app_provider.dart';
-import 'package:credential_manager/credential_manager.dart';
+import 'package:appkey_webauthn_flutter/appkey_webauthn_flutter.dart'; 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
