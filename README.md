@@ -16,6 +16,16 @@ For help getting started with Flutter development, view the
 samples, guidance on mobile development, and a full API reference.
 
 
-## To Start Appkey 
 
-- update API_URL and APP_TOKEN in auth_service.dart
+## Update xCode for apple associate domain
+- open Runner.xcworkspace in ios folder
+- add/update Associated Domain in Xcode properties "Signin & Capabilites" eg: webcredentials:demo.appkey.io
+
+## To Start Appkey 
+- rename lib/config_default.dart to lib/config.dart
+- update API_URL and APP_TOKEN in lib/config.dart
+- open an iOS simulator
+- open terminal and go to root folder of this project
+- run "flutter pub get"
+- run "flutter run lib/main.dart"
+
