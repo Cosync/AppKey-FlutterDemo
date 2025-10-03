@@ -24,7 +24,7 @@ final appProvider = StateNotifierProvider < AppNotifier, AppModel> (
 
 class UserNotifier extends StateNotifier <UserModel> {
 
-  UserNotifier() : super(   UserModel(handle: "", displayName: "", status: "", appUserId: "", appId: "", authenticators: [], locale: "", loginProvider: "", accessToken: ""));
+  UserNotifier() : super(   UserModel(handle: "", firstName: "", lastName: "", status: "", appUserId: "", appId: "", authenticators: [], locale: "", loginProvider: "", accessToken: ""));
 
   void addUser(UserModel user){ 
     state = user;
@@ -41,7 +41,7 @@ class UserNotifier extends StateNotifier <UserModel> {
    
 
   void logout(){ 
-    state = UserModel(handle: "", displayName: "", status: "", appUserId: "", appId: "", authenticators: [], locale: "", loginProvider: "", accessToken: "");
+    state = UserModel(handle: "", firstName: "", lastName: "", status: "", appUserId: "", appId: "", authenticators: [], locale: "", loginProvider: "", accessToken: "");
   }  
    
 } 

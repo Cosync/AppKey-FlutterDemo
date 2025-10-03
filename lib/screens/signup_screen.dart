@@ -22,7 +22,8 @@ class _SignupScreen extends ConsumerState<SignupScreen> {
   final _formKeyComfirmed = GlobalKey<FormState>();
 
   var _enteredHandle = '';
-  var _enteredName = '';
+  var _enteredFirstName = '';
+  var _enteredLastName = '';
   var _enteredCode = '';
   var _signupToken = '';
   var _message = '';
@@ -52,7 +53,7 @@ class _SignupScreen extends ConsumerState<SignupScreen> {
 
     try{
 
-      var result = await AuthService.signup(_enteredHandle, _enteredName);  
+      var result = await AuthService.signup(_enteredHandle, _enteredFirstName, _enteredLastName);  
 
       final credResponse = await AuthService.credentialManager.savePasskeyCredentials(request: result);
 
@@ -234,7 +235,7 @@ class _SignupScreen extends ConsumerState<SignupScreen> {
                       maxLength: 50,
                       autocorrect: false,
                       decoration: const InputDecoration(
-                        label: Text('Display Name'),
+                        label: Text('First Name'),
                       ),
                       validator: (value) {
                         if (value == null ||
@@ -246,7 +247,26 @@ class _SignupScreen extends ConsumerState<SignupScreen> {
                         return null;
                       },
                       onSaved: (value) {
-                        _enteredName = value!;
+                        _enteredFirstName = value!;
+                      },
+                    ),
+                     TextFormField(
+                      maxLength: 50,
+                      autocorrect: false,
+                      decoration: const InputDecoration(
+                        label: Text('Last Name'),
+                      ),
+                      validator: (value) {
+                        if (value == null ||
+                            value.isEmpty ||
+                            value.trim().length <= 1 ||
+                            value.trim().length > 50) {
+                          return 'Must be between 1 and 50 characters.';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _enteredLastName = value!;
                       },
                     ),
                     const SizedBox(height: 12),

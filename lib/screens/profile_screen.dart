@@ -27,7 +27,8 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
   var _errorMessage = '';
   var _isSending = false;
   var _enteredUsername = '';
-  var _enteredName = '';
+  var _enteredFirstName = '';
+  var _enteredLastName = '';
   final _formKey = GlobalKey<FormState>();
   
   
@@ -58,10 +59,11 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
         } 
       }
 
-      if(_enteredName != user.displayName){
-        final updated = await AuthService.updateProfile(_enteredName, user.accessToken);
+      if(_enteredFirstName != user.firstName || _enteredLastName != user.lastName){
+        final updated = await AuthService.updateProfile(_enteredFirstName, _enteredLastName, user.accessToken);
         if(updated) { 
-          ref.read(userProvider.notifier).updateUser('displayName', _enteredName);
+          ref.read(userProvider.notifier).updateUser('firstName', _enteredFirstName);
+          ref.read(userProvider.notifier).updateUser('lastName', _enteredLastName);
         }
       }
 
@@ -129,10 +131,10 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
               child: Column(
               children: [
                 TextFormField(
-                  initialValue: user.displayName,
+                  initialValue: user.firstName,
                   maxLength: 50, 
                   decoration: const InputDecoration(
-                    label: Text('Display Name'),
+                    label: Text('First Name'),
                   ),
                   validator: (value) {
                     if (value == null ||
@@ -144,7 +146,27 @@ class _ProfileScreen extends ConsumerState<ProfileScreen> {
                     return null;
                   },
                   onSaved: (value) {
-                    _enteredName = value!;
+                    _enteredFirstName = value!;
+                  },
+                ),
+
+                TextFormField(
+                  initialValue: user.lastName,
+                  maxLength: 50, 
+                  decoration: const InputDecoration(
+                    label: Text('Last Name'),
+                  ),
+                  validator: (value) {
+                    if (value == null ||
+                        value.isEmpty ||
+                        value.trim().length <= 1 ||
+                        value.trim().length > 50) {
+                      return 'Must be between 1 and 50 characters.';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _enteredLastName = value!;
                   },
                 ),
 
